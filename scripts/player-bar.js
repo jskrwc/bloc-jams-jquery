@@ -1,3 +1,11 @@
+function prettyTime(timeInSeconds) { //convert seconds to min:sec
+  let min = Math.floor(timeInSeconds/60);
+  let sec = Math.floor(timeInSeconds%60);
+  if (sec < 10) {sec = '0'+sec;}  //add leading zero if seconds < 10
+  return min + ':' + sec;
+}
+
+
 $( document ).ready(function() {
   $('button#play-pause').click( function() {
     player.playPause();
@@ -25,4 +33,31 @@ $( document ).ready(function() {
     const previousSong = album.songs[previousSongIndex];
     player.playPause(previousSong);
   });
+
+  // Time control input
+  $('#time-control input').on('input', function (event) {
+    player.skipTo(event.target.value);
+  });
+
+  setInterval( () => {
+    const currentTime = player.getTime();
+    const duration = player.getDuration();
+    const percent = (currentTime / duration) * 100;
+    $('#time-control .current-time').text( prettyTime(currentTime) );  //current time
+    $('#time-control .total-time').text( prettyTime(duration - currentTime) ); //time remaining
+    $('#time-control input').val(percent);
+  }, 1000);
+
+  //Volume control input
+  $('#volume-control input').on('input', function(event) {
+    player.setVolume(event.target.value);
+  });
+
+  setInterval( () =>{
+    const currentVolume = player.Volume();
+    const highestVolume = 100;
+    const percent = (currentVolume / highestVolume);
+
+  }, 1000);
+
 });
